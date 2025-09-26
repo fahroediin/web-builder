@@ -8,24 +8,29 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const ComponentTree = ({ components, onSelectComponent, selectedComponentId, isPreviewMode }) => {
+const DropIndicator = () => <div className="drop-indicator" />;
+
+const ComponentTree = ({ components, onSelectComponent, selectedComponentId, isPreviewMode, dropIndicatorId }) => {
   if (!components) return null;
   return (
     <SortableContext items={components.map(c => c.id)} strategy={verticalListSortingStrategy}>
       {components.map(comp => (
-        <SortableItem
-          key={comp.id}
-          component={comp}
-          onSelectComponent={onSelectComponent}
-          selectedComponentId={selectedComponentId}
-          isPreviewMode={isPreviewMode}
-        />
+        <React.Fragment key={comp.id}>
+          {comp.id === dropIndicatorId && <DropIndicator />}
+          <SortableItem
+            component={comp}
+            onSelectComponent={onSelectComponent}
+            selectedComponentId={selectedComponentId}
+            isPreviewMode={isPreviewMode}
+            dropIndicatorId={dropIndicatorId}
+          />
+        </React.Fragment>
       ))}
     </SortableContext>
   );
 };
 
-const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPreviewMode }) => {
+const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPreviewMode, dropIndicatorId }) => {
   const {
     attributes,
     listeners,
@@ -67,12 +72,13 @@ const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPre
         isPreviewMode={isPreviewMode}
         onSelectComponent={onSelectComponent}
         selectedComponentId={selectedComponentId}
+        dropIndicatorId={dropIndicatorId}
       />
     </div>
   );
 };
 
-export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, isPreviewMode, onSelectComponent, selectedComponentId }) => {
+export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, isPreviewMode, onSelectComponent, selectedComponentId, dropIndicatorId }) => {
   const style = {
     color: component.styles?.color || 'var(--text-primary)',
     backgroundColor: component.styles?.backgroundColor || 'var(--bg-tertiary)',
@@ -83,8 +89,6 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
     padding: component.styles?.padding,
     userSelect: 'none',
     boxShadow: isDraggingOverlay ? '0 10px 20px rgba(0,0,0,0.2)' : 'none',
-    
-    // Penerapan style baru
     display: component.type === 'container' ? 'flex' : component.styles?.display,
     flexDirection: component.styles?.flexDirection,
     justifyContent: component.styles?.justifyContent,
@@ -100,15 +104,19 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
   const className = `canvas-component canvas-component-${component.type}`;
 
   if (component.type === 'container') {
+    const containerClassName = `${className} ${component.children?.length === 0 ? 'is-empty' : ''}`;
     return (
-      <div style={style} className={className}>
+      <div style={style} className={containerClassName}>
         <ComponentTree 
           components={component.children}
           onSelectComponent={onSelectComponent}
           selectedComponentId={selectedComponentId}
           isPreviewMode={isPreviewMode}
+          dropIndicatorId={dropIndicatorId}
         />
-        {!isPreviewMode && component.children?.length === 0 && <p className="empty-container-text">Drop komponen di sini</p>}
+        {!isPreviewMode && component.children?.length === 0 && component.content !== 'Kolom' && (
+          <p className="empty-container-text">Drop komponen di sini</p>
+        )}
       </div>
     );
   }
@@ -128,7 +136,7 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
   }
 };
 
-function Canvas({ components, onSelectComponent, selectedComponentId, isPreviewMode }) {
+function Canvas({ components, onSelectComponent, selectedComponentId, isPreviewMode, dropIndicatorId }) {
   const { setNodeRef } = useDroppable({
     id: 'canvas',
     data: {
@@ -146,6 +154,7 @@ function Canvas({ components, onSelectComponent, selectedComponentId, isPreviewM
           onSelectComponent={onSelectComponent}
           selectedComponentId={selectedComponentId}
           isPreviewMode={isPreviewMode}
+          dropIndicatorId={dropIndicatorId}
         />
       )}
     </div>

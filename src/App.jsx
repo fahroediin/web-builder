@@ -64,6 +64,7 @@ function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [activeComponent, setActiveComponent] = useState(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [dropIndicatorId, setDropIndicatorId] = useState(null);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -98,8 +99,25 @@ function App() {
     setActiveComponent(component || { type: active.id, id: active.id });
   }
 
+  function handleDragOver(event) {
+    if (isPreviewMode) return;
+    const { active, over } = event;
+    if (!over || active.id === over.id) {
+      setDropIndicatorId(null);
+      return;
+    }
+    
+    const isOverContainer = over.data.current?.type === 'container';
+    if (isOverContainer) {
+      setDropIndicatorId(null);
+    } else {
+      setDropIndicatorId(over.id);
+    }
+  }
+
   function handleDragEnd(event) {
     setActiveComponent(null);
+    setDropIndicatorId(null);
     if (isPreviewMode) return;
 
     const { active, over } = event;
@@ -159,7 +177,7 @@ function App() {
           const parentOfOver = findParentContainer(overId, newTree, { children: newTree });
           if (parentOfOver) {
             const overIndex = parentOfOver.children.findIndex(c => c.id === overId);
-            parentOfOver.children.splice(overIndex + 1, 0, newComponent);
+            parentOfOver.children.splice(overIndex, 0, newComponent);
           }
         }
       } else { // Moving existing component
@@ -229,6 +247,7 @@ function App() {
       <DndContext 
         sensors={sensors} 
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd} 
         collisionDetection={closestCenter}
       >
@@ -239,6 +258,7 @@ function App() {
             onSelectComponent={setSelectedComponentId}
             selectedComponentId={selectedComponentId}
             isPreviewMode={isPreviewMode}
+            dropIndicatorId={dropIndicatorId}
           />
           {!isPreviewMode && (
             <Inspector 

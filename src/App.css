@@ -99,7 +99,7 @@ body {
 .sidebar { border-right: 1px solid var(--border-color); }
 .inspector { width: 300px; border-left: 1px solid var(--border-color); }
 
-.sidebar h3, .inspector h3 {
+.sidebar h3 {
   margin-top: 0;
   color: var(--text-primary);
 }
@@ -142,6 +142,54 @@ body {
   border-radius: 4px;
 }
 
+.canvas-component-container {
+  min-height: 50px;
+  border-style: dashed !important;
+  display: flex;
+  gap: 10px;
+  position: relative; /* <-- PERBAIKAN KUNCI ADA DI SINI */
+  transition: background-color 0.2s ease;
+}
+
+.canvas-component-container:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.canvas-component-container[style*="flex-direction: row"] {
+  gap: 20px;
+}
+
+.canvas-component-container[style*="flex-direction: row"] > div > div > .canvas-component-container {
+  flex: 1;
+  margin: 0 !important;
+}
+
+.empty-container-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.canvas-component-container.is-empty:hover .empty-container-text {
+  opacity: 1;
+}
+
+.drop-indicator {
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+  margin: 2px 0;
+  box-shadow: 0 0 5px var(--accent-color);
+}
+
 .inspector label {
   display: block;
   margin-bottom: 5px;
@@ -149,7 +197,7 @@ body {
   color: var(--text-secondary);
 }
 
-.inspector input {
+.inspector input, .inspector select {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
@@ -206,47 +254,4 @@ body {
 
 .delete-button:hover {
   background-color: var(--danger-hover-color);
-}
-
-/* Tambahkan ini di suatu tempat di file App.css */
-.canvas-component-container {
-  min-height: 80px;
-  border-style: dashed !important;
-  display: flex;
-  gap: 10px;
-  position: relative; /* Untuk positioning teks */
-}
-
-.empty-container-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  color: var(--text-secondary);
-  font-style: italic;
-  font-size: 14px;
-  pointer-events: none; /* Agar tidak mengganggu drop */
-}
-
-/* Style untuk select dropdown di Inspector */
-.inspector select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-/* Style untuk container utama dari layout kolom */
-.canvas-component-container[style*="flex-direction: row"] {
-  gap: 20px; /* Beri jarak antar kolom */
-}
-
-/* Style untuk setiap kolom di dalam layout */
-.canvas-component-container[style*="flex-direction: row"] > div > div > .canvas-component-container {
-  flex: 1; /* Ini adalah kunci: buat setiap kolom memiliki lebar yang sama */
-  margin: 0 !important; /* Override margin default */
 }
