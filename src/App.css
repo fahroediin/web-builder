@@ -1,8 +1,6 @@
 /* src/App.css */
 
-/* --- BAGIAN BARU: DEFINISI VARIABEL TEMA --- */
 :root {
-  /* Mode Terang (Light Mode) */
   --bg-primary: #f9f9f9;
   --bg-secondary: #f0f0f0;
   --bg-tertiary: #ffffff;
@@ -16,42 +14,37 @@
 }
 
 [data-theme="dark"] {
-  /* Mode Gelap (Dark Mode) */
-  --bg-primary: #2d3748; /* abu-abu gelap */
-  --bg-secondary: #1a202c; /* hampir hitam */
-  --bg-tertiary: #4a5568; /* abu-abu sedang */
-  --text-primary: #edf2f7; /* putih pudar */
-  --text-secondary: #a0aec0; /* abu-abu terang */
+  --bg-primary: #2d3748;
+  --bg-secondary: #1a202c;
+  --bg-tertiary: #4a5568;
+  --text-primary: #edf2f7;
+  --text-secondary: #a0aec0;
   --border-color: #4a5568;
   --border-color-light: #2d3748;
-  --accent-color: #4299e1; /* biru lebih terang */
+  --accent-color: #4299e1;
   --danger-color: #e53e3e;
   --danger-hover-color: #c53030;
 }
-/* --- AKHIR BAGIAN BARU --- */
-
 
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: var(--bg-secondary); /* Gunakan variabel */
+  background-color: var(--bg-secondary);
 }
 
 body {
   font-family: sans-serif;
-  color: var(--text-primary); /* Gunakan variabel */
+  color: var(--text-primary);
 }
 
-/* BARU: Wrapper untuk layout vertikal (Toolbar + App) */
 .app-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* BARU: Styling untuk Toolbar */
 .toolbar {
   padding: 10px 20px;
   background-color: var(--bg-tertiary);
@@ -59,6 +52,18 @@ body {
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.preview-toggle-button {
+  padding: 8px 16px;
+  border: 1px solid var(--accent-color);
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: auto;
 }
 
 .theme-toggle-button {
@@ -76,25 +81,34 @@ body {
   flex-grow: 1;
 }
 
+.app-container.preview-mode .canvas {
+  max-width: 1200px;
+  margin: 20px auto;
+  background-color: var(--bg-tertiary);
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
 .sidebar, .inspector {
   width: 250px;
   padding: 20px;
-  background-color: var(--bg-primary); /* Gunakan variabel */
+  background-color: var(--bg-primary);
   overflow-y: auto;
+  flex-shrink: 0;
 }
 .sidebar { border-right: 1px solid var(--border-color); }
 .inspector { width: 300px; border-left: 1px solid var(--border-color); }
 
 .sidebar h3, .inspector h3 {
   margin-top: 0;
-  color: var(--text-primary); /* Gunakan variabel */
+  color: var(--text-primary);
 }
 
 .draggable-item {
   padding: 10px;
-  border: 1px solid var(--border-color-light); /* Gunakan variabel */
-  background-color: var(--bg-tertiary); /* Gunakan variabel */
-  color: var(--text-secondary); /* Gunakan variabel */
+  border: 1px solid var(--border-color-light);
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
   margin-bottom: 10px;
   cursor: grab;
   text-align: center;
@@ -103,50 +117,50 @@ body {
 
 .draggable-item:active { cursor: grabbing; }
 
+.draggable-item-overlay {
+  padding: 10px;
+  border: 1px solid var(--border-color-light);
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  cursor: grabbing;
+}
+
 .canvas {
   flex-grow: 1;
   padding: 20px;
-  background-color: var(--bg-secondary); /* Gunakan variabel */
+  background-color: var(--bg-secondary);
   overflow-y: auto;
+  transition: all 0.3s ease;
 }
 
 .canvas p { color: var(--text-secondary); text-align: center; margin-top: 50px; }
+
+.canvas-component {
+  border-radius: 4px;
+}
 
 .inspector label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-  color: var(--text-secondary); /* Gunakan variabel */
+  color: var(--text-secondary);
 }
 
 .inspector input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
-  border: 1px solid var(--border-color); /* Gunakan variabel */
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  background-color: var(--bg-tertiary); /* Gunakan variabel */
-  color: var(--text-primary); /* Gunakan variabel */
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .style-control { margin-top: 15px; }
 
-.style-control input[type="color"] {
-  width: 100%;
-  height: 30px;
-  padding: 0;
-  border: 1px solid var(--border-color); /* Gunakan variabel */
-  cursor: pointer;
-}
-
-/* Tambahkan ini di suatu tempat di tengah file */
-.canvas-component {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border-radius: 4px;
-}
-
-/* Tambahkan ini di bagian styling Inspector */
 .input-wrapper {
   display: flex;
   gap: 10px;
@@ -165,16 +179,24 @@ body {
   cursor: pointer;
 }
 
+.style-control input[type="color"] {
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
 .delete-section {
   margin-top: 20px;
-  border-top: 1px solid var(--border-color-light); /* Gunakan variabel */
+  border-top: 1px solid var(--border-color-light);
   padding-top: 20px;
 }
 
 .delete-button {
   width: 100%;
   padding: 10px;
-  background-color: var(--danger-color); /* Gunakan variabel */
+  background-color: var(--danger-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -183,16 +205,5 @@ body {
 }
 
 .delete-button:hover {
-  background-color: var(--danger-hover-color); /* Gunakan variabel */
-}
-
-.draggable-item-overlay {
-  padding: 10px;
-  border: 1px solid var(--border-color-light);
-  background-color: var(--bg-tertiary);
-  color: var(--text-secondary);
-  border-radius: 4px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  cursor: grabbing;
+  background-color: var(--danger-hover-color);
 }

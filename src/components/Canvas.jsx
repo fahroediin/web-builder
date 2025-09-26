@@ -8,7 +8,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableItem = ({ component, isSelected, onSelectComponent }) => {
+const SortableItem = ({ component, isSelected, onSelectComponent, isPreviewMode }) => {
   const {
     attributes,
     listeners,
@@ -18,11 +18,7 @@ const SortableItem = ({ component, isSelected, onSelectComponent }) => {
     isDragging,
   } = useSortable({ 
     id: component.id,
-    // BARU: Tandai item ini sebagai 'sortable-item'
-    data: {
-      type: 'sortable-item',
-      component: component,
-    }
+    disabled: isPreviewMode,
   });
 
   const style = {
@@ -37,22 +33,23 @@ const SortableItem = ({ component, isSelected, onSelectComponent }) => {
       style={style} 
       {...attributes} 
       {...listeners} 
-      onClick={() => onSelectComponent(component.id)}
+      onClick={() => !isPreviewMode && onSelectComponent(component.id)}
     >
       <RenderedComponent
         component={component}
-        isSelected={isSelected}
+        isSelected={!isPreviewMode && isSelected}
+        isPreviewMode={isPreviewMode}
       />
     </div>
   );
 };
 
-export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) => {
+export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, isPreviewMode }) => {
   const style = {
     color: component.styles?.color || 'var(--text-primary)',
     backgroundColor: component.styles?.backgroundColor || 'var(--bg-tertiary)',
-    border: isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)',
-    cursor: isDraggingOverlay ? 'grabbing' : 'grab',
+    border: '1px solid transparent', // Default border transparan
+    cursor: isPreviewMode ? 'default' : (isDraggingOverlay ? 'grabbing' : 'grab'),
     fontSize: component.styles?.fontSize,
     margin: component.styles?.margin,
     padding: component.styles?.padding,
@@ -61,13 +58,20 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) 
     boxShadow: isDraggingOverlay ? '0 10px 20px rgba(0,0,0,0.2)' : 'none',
   };
 
+  if (!isPreviewMode) {
+    style.border = isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)';
+  }
+
   const className = `canvas-component canvas-component-${component.type}`;
 
   switch (component.type) {
     case 'heading':
       return <h1 style={style} className={className}>{component.content}</h1>;
     case 'button':
-      style.border = isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)';
+      // Untuk button, kita perlu memastikan border default-nya di-override
+      if (!isPreviewMode) {
+        style.border = isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)';
+      }
       return <button style={style} className={className}>{component.content}</button>;
     case 'paragraph':
       return <p style={style} className={className}>{component.content}</p>;
@@ -76,10 +80,9 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) 
   }
 };
 
-function Canvas({ components, onSelectComponent, selectedComponentId }) {
+function Canvas({ components, onSelectComponent, selectedComponentId, isPreviewMode }) {
   const { setNodeRef } = useDroppable({
     id: 'canvas',
-    // BARU: Tandai area ini sebagai 'canvas-container'
     data: {
       type: 'canvas-container',
     }
@@ -97,6 +100,7 @@ function Canvas({ components, onSelectComponent, selectedComponentId }) {
               component={comp}
               isSelected={comp.id === selectedComponentId}
               onSelectComponent={onSelectComponent}
+              isPreviewMode={isPreviewMode}
             />
           ))}
         </SortableContext>

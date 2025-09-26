@@ -20,6 +20,7 @@ function App() {
   const [selectedComponentId, setSelectedComponentId] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [activeComponent, setActiveComponent] = useState(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -28,6 +29,11 @@ function App() {
 
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  const togglePreviewMode = () => {
+    setIsPreviewMode(prev => !prev);
+    setSelectedComponentId(null);
   };
 
   const sensors = useSensors(
@@ -51,13 +57,7 @@ function App() {
   function handleDragEnd(event) {
     const { active, over } = event;
     setActiveComponent(null);
-    if (!over) return;
-
-    // --- PERBAIKAN KUNCI ADA DI SINI ---
-    // Jika komponen dijatuhkan kembali ke sidebar, batalkan aksi.
-    if (over.id === 'sidebar-container') {
-      return;
-    }
+    if (!over || over.id === 'sidebar-container') return;
 
     const isSidebarComponent = ['heading', 'button', 'paragraph'].includes(active.id);
     const isCanvasComponent = canvasComponents.some(c => c.id === active.id);
@@ -89,26 +89,37 @@ function App() {
 
   return (
     <div className="app-wrapper">
-      <Toolbar theme={theme} toggleTheme={toggleTheme} />
+      <Toolbar 
+        theme={theme} 
+        toggleTheme={toggleTheme}
+        isPreviewMode={isPreviewMode}
+        togglePreviewMode={togglePreviewMode}
+      />
       <DndContext 
         sensors={sensors} 
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd} 
         collisionDetection={closestCenter}
+        disabled={isPreviewMode}
       >
-        <div className="app-container">
-          <Sidebar />
+        <div className={`app-container ${isPreviewMode ? 'preview-mode' : ''}`}>
+          {!isPreviewMode && <Sidebar />}
+          
           <Canvas 
             components={canvasComponents} 
             onSelectComponent={setSelectedComponentId}
             selectedComponentId={selectedComponentId}
+            isPreviewMode={isPreviewMode}
           />
-          <Inspector 
-            component={selectedComponent}
-            onContentChange={updateComponentContent}
-            onStyleChange={updateComponentStyle}
-            onDelete={deleteComponent}
-          />
+
+          {!isPreviewMode && (
+            <Inspector 
+              component={selectedComponent}
+              onContentChange={updateComponentContent}
+              onStyleChange={updateComponentStyle}
+              onDelete={deleteComponent}
+            />
+          )}
         </div>
         
         <DragOverlay dropAnimation={null}>
