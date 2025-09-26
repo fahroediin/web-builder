@@ -65,8 +65,6 @@ function App() {
     const isSidebarComponent = ['heading', 'button', 'paragraph'].includes(active.id);
     const isCanvasComponent = canvasComponents.some(c => c.id === active.id);
 
-    // --- LOGIKA DIPERBAIKI MENGGUNAKAN PEMERIKSAAN ID LANGSUNG ---
-    // Skenario 1: Menambah komponen baru dari sidebar
     if (isSidebarComponent) {
       const isDroppingInCanvasArea = over.id === 'canvas' || canvasComponents.some(c => c.id === over.id);
       if (isDroppingInCanvasArea) {
@@ -77,7 +75,6 @@ function App() {
         setCanvasComponents((prev) => [...prev, newComponent]);
       }
     } 
-    // Skenario 2: Mengurutkan komponen yang sudah ada di canvas
     else if (isCanvasComponent) {
       const isTargetInCanvas = canvasComponents.some(c => c.id === over.id);
       if (isTargetInCanvas && active.id !== over.id) {
@@ -108,7 +105,9 @@ function App() {
         collisionDetection={closestCenter}
       >
         <div className={`app-container ${isPreviewMode ? 'preview-mode' : ''}`}>
-          <Sidebar isPreviewMode={isPreviewMode} />
+          {/* --- PERBAIKAN KUNCI ADA DI SINI --- */}
+          {/* Tambahkan kembali kondisi untuk menyembunyikan Sidebar */}
+          {!isPreviewMode && <Sidebar isPreviewMode={isPreviewMode} />}
           
           <Canvas 
             components={canvasComponents} 
@@ -117,6 +116,7 @@ function App() {
             isPreviewMode={isPreviewMode}
           />
 
+          {/* Kondisi untuk Inspector sudah benar, tidak perlu diubah */}
           {!isPreviewMode && (
             <Inspector 
               component={selectedComponent}
