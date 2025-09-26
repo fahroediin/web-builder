@@ -105,7 +105,7 @@ function App() {
     const { active, over } = event;
     if (!over || over.id === 'sidebar-container' || active.id === over.id) return;
 
-    const isSidebarComponent = ['heading', 'button', 'paragraph', 'container'].includes(active.id);
+    const isSidebarComponent = ['heading', 'button', 'paragraph', 'container', '2-columns', '3-columns'].includes(active.id);
 
     setCanvasComponents(prev => {
       let newTree = JSON.parse(JSON.stringify(prev));
@@ -113,11 +113,31 @@ function App() {
       const activeId = active.id;
 
       if (isSidebarComponent) {
-        const newComponent = {
-          id: uuidv4(), type: active.id, content: `Ini adalah ${active.id}`,
-          styles: { color: null, backgroundColor: null, fontSize: '16px', margin: '10px', padding: '10px', flexDirection: 'column' },
-          children: [],
-        };
+        let newComponent;
+
+        if (active.id === '2-columns' || active.id === '3-columns') {
+          const columnCount = active.id === '2-columns' ? 2 : 3;
+          newComponent = {
+            id: uuidv4(),
+            type: 'container',
+            content: 'Layout Kolom',
+            styles: { flexDirection: 'row', padding: '10px', margin: '10px' },
+            children: Array.from({ length: columnCount }, () => ({
+              id: uuidv4(),
+              type: 'container',
+              content: 'Kolom',
+              styles: { padding: '10px', margin: '0px', flexDirection: 'column' },
+              children: [],
+            })),
+          };
+        } else {
+          newComponent = {
+            id: uuidv4(), type: active.id, content: `Ini adalah ${active.id}`,
+            styles: { color: null, backgroundColor: null, fontSize: '16px', margin: '10px', padding: '10px', flexDirection: 'column' },
+            children: [],
+          };
+        }
+
         const targetContainer = findContainer(overId, newTree);
         if (targetContainer) {
           targetContainer.push(newComponent);
@@ -128,7 +148,7 @@ function App() {
             parentOfOver.children.splice(overIndex + 1, 0, newComponent);
           }
         }
-      } else {
+      } else { // Moving existing component
         const activeComponentData = findComponent(activeId, newTree);
         if (!activeComponentData) return prev;
         
@@ -218,8 +238,6 @@ function App() {
         <DragOverlay dropAnimation={null}>
           {activeComponent ? (
             findComponent(activeComponent.id, canvasComponents) ? (
-              // --- PERBAIKAN KUNCI ADA DI SINI ---
-              // Teruskan semua prop yang dibutuhkan oleh RenderedComponent dan anak-anaknya
               <RenderedComponent 
                 component={activeComponent} 
                 isDraggingOverlay={true}
@@ -229,6 +247,8 @@ function App() {
               />
             ) : (
               <div className="draggable-item-overlay">
+                {activeComponent.type === '2-columns' && '2 Kolom'}
+                {activeComponent.type === '3-columns' && '3 Kolom'}
                 {activeComponent.type === 'container' && 'Container (Div)'}
                 {activeComponent.type === 'heading' && 'Judul (Heading)'}
                 {activeComponent.type === 'button' && 'Tombol (Button)'}

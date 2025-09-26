@@ -239,3 +239,14 @@ body {
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
 }
+
+/* Style untuk container utama dari layout kolom */
+.canvas-component-container[style*="flex-direction: row"] {
+  gap: 20px; /* Beri jarak antar kolom */
+}
+
+/* Style untuk setiap kolom di dalam layout */
+.canvas-component-container[style*="flex-direction: row"] > div > div > .canvas-component-container {
+  flex: 1; /* Ini adalah kunci: buat setiap kolom memiliki lebar yang sama */
+  margin: 0 !important; /* Override margin default */
+}
