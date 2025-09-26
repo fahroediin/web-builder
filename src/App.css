@@ -1,0 +1,124 @@
+/* src/App.css */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Mencegah scroll bar yang tidak perlu di level body */
+}
+
+body {
+  font-family: sans-serif;
+  /* Hapus 'margin: 0;' dari sini karena sudah ada di atas */
+  color: #333;
+}
+
+.app-container {
+  display: flex;
+  height: 100%; /* Ganti dari 100vh ke 100% agar mengikuti parent-nya */
+}
+
+.sidebar {
+  width: 250px;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+  background-color: #f9f9f9;
+  overflow-y: auto; /* Tambahkan scroll jika komponen banyak */
+}
+
+.sidebar h3 {
+  margin-top: 0;
+}
+
+.draggable-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  margin-bottom: 10px;
+  cursor: grab;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+}
+
+.canvas {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f0f0f0;
+  overflow-y: auto; /* Tambahkan scroll jika konten di canvas melebihi layar */
+}
+
+.canvas p {
+  color: #888;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.inspector {
+  width: 300px;
+  border-left: 1px solid #ccc;
+  padding: 20px;
+  background-color: #f9f9f9;
+  overflow-y: auto; /* Tambahkan scroll jika properti banyak */
+}
+
+.inspector h3 {
+  margin-top: 0;
+}
+
+.inspector label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.inspector input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.style-control {
+  margin-top: 15px;
+}
+
+.style-control input[type="color"] {
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.style-control input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.delete-section {
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.delete-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
