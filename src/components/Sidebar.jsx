@@ -2,11 +2,9 @@
 import React from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 
-// DIUBAH: Terima prop isPreviewMode
 export function Draggable({ id, children, isPreviewMode }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: id,
-    // BARU: Nonaktifkan drag saat pratinjau
     disabled: isPreviewMode,
   });
 
@@ -21,7 +19,6 @@ export function Draggable({ id, children, isPreviewMode }) {
   );
 }
 
-// DIUBAH: Terima dan teruskan prop isPreviewMode
 function Sidebar({ isPreviewMode }) {
   const { setNodeRef } = useDroppable({
     id: 'sidebar-container',
@@ -30,6 +27,7 @@ function Sidebar({ isPreviewMode }) {
   return (
     <div ref={setNodeRef} className="sidebar">
       <h3>Komponen</h3>
+      <Draggable id="container" isPreviewMode={isPreviewMode}>Container (Div)</Draggable>
       <Draggable id="heading" isPreviewMode={isPreviewMode}>Judul (Heading)</Draggable>
       <Draggable id="button" isPreviewMode={isPreviewMode}>Tombol (Button)</Draggable>
       <Draggable id="paragraph" isPreviewMode={isPreviewMode}>Paragraf</Draggable>

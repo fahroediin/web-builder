@@ -8,7 +8,26 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableItem = ({ component, isSelected, onSelectComponent, isPreviewMode }) => {
+const ComponentTree = ({ components, onSelectComponent, selectedComponentId, isPreviewMode }) => {
+  if (!components) return null;
+  return (
+    <SortableContext items={components.map(c => c.id)} strategy={verticalListSortingStrategy}>
+      {components.map(comp => (
+        <SortableItem
+          key={comp.id}
+          component={comp}
+          // DIUBAH: Teruskan semua prop yang dibutuhkan ke SortableItem
+          onSelectComponent={onSelectComponent}
+          selectedComponentId={selectedComponentId}
+          isPreviewMode={isPreviewMode}
+        />
+      ))}
+    </SortableContext>
+  );
+};
+
+// DIUBAH: Terima prop selectedComponentId
+const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPreviewMode }) => {
   const {
     attributes,
     listeners,
@@ -18,7 +37,11 @@ const SortableItem = ({ component, isSelected, onSelectComponent, isPreviewMode 
     isDragging,
   } = useSortable({ 
     id: component.id,
-    disabled: isPreviewMode, // INI BENAR DAN DIPERTAHANKAN
+    disabled: isPreviewMode,
+    data: {
+      type: component.type === 'container' ? 'container' : 'sortable-item',
+      component: component,
+    }
   });
 
   const style = {
@@ -27,24 +50,32 @@ const SortableItem = ({ component, isSelected, onSelectComponent, isPreviewMode 
     visibility: isDragging ? 'hidden' : 'visible',
   };
 
+  // Hitung isSelected di sini
+  const isSelected = !isPreviewMode && component.id === selectedComponentId;
+
   return (
     <div 
       ref={setNodeRef} 
       style={style} 
       {...attributes} 
       {...listeners} 
-      onClick={() => !isPreviewMode && onSelectComponent(component.id)}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!isPreviewMode) onSelectComponent(component.id);
+      }}
     >
       <RenderedComponent
         component={component}
-        isSelected={!isPreviewMode && isSelected}
+        isSelected={isSelected} // Teruskan hasil perhitungan
         isPreviewMode={isPreviewMode}
+        onSelectComponent={onSelectComponent}
+        selectedComponentId={selectedComponentId}
       />
     </div>
   );
 };
 
-export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, isPreviewMode }) => {
+export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, isPreviewMode, onSelectComponent, selectedComponentId }) => {
   const style = {
     color: component.styles?.color || 'var(--text-primary)',
     backgroundColor: component.styles?.backgroundColor || 'var(--bg-tertiary)',
@@ -56,6 +87,8 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
     userSelect: 'none',
     borderRadius: '4px',
     boxShadow: isDraggingOverlay ? '0 10px 20px rgba(0,0,0,0.2)' : 'none',
+    display: component.styles?.display,
+    flexDirection: component.styles?.flexDirection,
   };
 
   if (!isPreviewMode) {
@@ -63,6 +96,20 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
   }
 
   const className = `canvas-component canvas-component-${component.type}`;
+
+  if (component.type === 'container') {
+    return (
+      <div style={style} className={className}>
+        <ComponentTree 
+          components={component.children}
+          onSelectComponent={onSelectComponent}
+          selectedComponentId={selectedComponentId}
+          isPreviewMode={isPreviewMode}
+        />
+        {!isPreviewMode && component.children?.length === 0 && <p className="empty-container-text">Drop komponen di sini</p>}
+      </div>
+    );
+  }
 
   switch (component.type) {
     case 'heading':
@@ -92,17 +139,12 @@ function Canvas({ components, onSelectComponent, selectedComponentId, isPreviewM
       {components.length === 0 ? (
         <p>Drag komponen dari sidebar ke sini</p>
       ) : (
-        <SortableContext items={components} strategy={verticalListSortingStrategy}>
-          {components.map(comp => (
-            <SortableItem
-              key={comp.id}
-              component={comp}
-              isSelected={comp.id === selectedComponentId}
-              onSelectComponent={onSelectComponent}
-              isPreviewMode={isPreviewMode}
-            />
-          ))}
-        </SortableContext>
+        <ComponentTree 
+          components={components}
+          onSelectComponent={onSelectComponent}
+          selectedComponentId={selectedComponentId}
+          isPreviewMode={isPreviewMode}
+        />
       )}
     </div>
   );
