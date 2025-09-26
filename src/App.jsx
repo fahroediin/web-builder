@@ -45,7 +45,7 @@ function App() {
   function handleDragStart(event) {
     const { active } = event;
     const component = canvasComponents.find(c => c.id === active.id);
-    setActiveComponent(component || { type: active.id, id: active.id }); // Beri ID sementara
+    setActiveComponent(component || { type: active.id, id: active.id });
   }
 
   function handleDragEnd(event) {
@@ -53,27 +53,32 @@ function App() {
     setActiveComponent(null);
     if (!over) return;
 
+    // --- PERBAIKAN KUNCI ADA DI SINI ---
+    // Jika komponen dijatuhkan kembali ke sidebar, batalkan aksi.
+    if (over.id === 'sidebar-container') {
+      return;
+    }
+
     const isSidebarComponent = ['heading', 'button', 'paragraph'].includes(active.id);
-    
-    // DIPERBAIKI: Kondisi penambahan komponen lebih ketat
-    if (isSidebarComponent && over) {
-      const isDroppingInCanvas = over.id === 'canvas' || canvasComponents.some(c => c.id === over.id);
-      if (isDroppingInCanvas) {
+    const isCanvasComponent = canvasComponents.some(c => c.id === active.id);
+
+    if (isSidebarComponent) {
+      const isDroppingInCanvasArea = over.data.current?.type === 'canvas-container' || over.data.current?.type === 'sortable-item';
+      if (isDroppingInCanvasArea) {
         const newComponent = {
           id: uuidv4(), type: active.id, content: `Ini adalah ${active.id}`,
           styles: { color: null, backgroundColor: null, fontSize: '16px', margin: '10px', padding: '10px' },
         };
         setCanvasComponents((prev) => [...prev, newComponent]);
-        return;
       }
-    }
-
-    const isMovingCanvasComponent = canvasComponents.some(c => c.id === active.id);
-    const isTargetCanvasComponent = canvasComponents.some(c => c.id === over.id);
-    if (isMovingCanvasComponent && isTargetCanvasComponent && active.id !== over.id) {
-      const oldIndex = canvasComponents.findIndex(c => c.id === active.id);
-      const newIndex = canvasComponents.findIndex(c => c.id === over.id);
-      setCanvasComponents(components => arrayMove(components, oldIndex, newIndex));
+    } 
+    else if (isCanvasComponent) {
+      const isTargetSortableItem = over.data.current?.type === 'sortable-item';
+      if (isTargetSortableItem && active.id !== over.id) {
+        const oldIndex = canvasComponents.findIndex(c => c.id === active.id);
+        const newIndex = canvasComponents.findIndex(c => c.id === over.id);
+        setCanvasComponents(components => arrayMove(components, oldIndex, newIndex));
+      }
     }
   };
   
@@ -106,14 +111,11 @@ function App() {
           />
         </div>
         
-        {/* DIUBAH: DragOverlay sekarang digunakan untuk semua jenis drag */}
         <DragOverlay dropAnimation={null}>
           {activeComponent ? (
             canvasComponents.some(c => c.id === activeComponent.id) ? (
-              // Jika komponen dari canvas, render dengan RenderedComponent
               <RenderedComponent component={activeComponent} isDraggingOverlay={true} />
             ) : (
-              // Jika komponen dari sidebar, render dengan Draggable
               <div className="draggable-item-overlay">
                 {activeComponent.type === 'heading' && 'Judul (Heading)'}
                 {activeComponent.type === 'button' && 'Tombol (Button)'}

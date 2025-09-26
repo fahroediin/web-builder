@@ -18,9 +18,13 @@ const SortableItem = ({ component, isSelected, onSelectComponent }) => {
     isDragging,
   } = useSortable({ 
     id: component.id,
+    // BARU: Tandai item ini sebagai 'sortable-item'
+    data: {
+      type: 'sortable-item',
+      component: component,
+    }
   });
 
-  // DIUBAH: Gunakan 'visibility: hidden' untuk menghilangkan kedipan
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -43,7 +47,6 @@ const SortableItem = ({ component, isSelected, onSelectComponent }) => {
   );
 };
 
-// DIUBAH: Tambahkan prop 'isDraggingOverlay'
 export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) => {
   const style = {
     color: component.styles?.color || 'var(--text-primary)',
@@ -55,7 +58,6 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) 
     padding: component.styles?.padding,
     userSelect: 'none',
     borderRadius: '4px',
-    // Tambahkan bayangan jika ini adalah overlay yang di-drag
     boxShadow: isDraggingOverlay ? '0 10px 20px rgba(0,0,0,0.2)' : 'none',
   };
 
@@ -77,6 +79,10 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) 
 function Canvas({ components, onSelectComponent, selectedComponentId }) {
   const { setNodeRef } = useDroppable({
     id: 'canvas',
+    // BARU: Tandai area ini sebagai 'canvas-container'
+    data: {
+      type: 'canvas-container',
+    }
   });
 
   return (

@@ -1,13 +1,13 @@
 // src/components/Sidebar.jsx
 import React from 'react';
-import { useDraggable } from '@dnd-kit/core';
+// DIUBAH: Import useDroppable
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 
 export function Draggable({ id, children }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: id,
   });
 
-  // DIUBAH: Gunakan 'visibility: hidden'
   const style = {
     visibility: isDragging ? 'hidden' : 'visible',
   };
@@ -20,8 +20,14 @@ export function Draggable({ id, children }) {
 }
 
 function Sidebar() {
+  // BARU: Jadikan sidebar sebagai droppable container
+  const { setNodeRef } = useDroppable({
+    id: 'sidebar-container', // Beri ID unik
+  });
+
   return (
-    <div className="sidebar">
+    // DIUBAH: Terapkan ref ke div utama sidebar
+    <div ref={setNodeRef} className="sidebar">
       <h3>Komponen</h3>
       <Draggable id="heading">Judul (Heading)</Draggable>
       <Draggable id="button">Tombol (Button)</Draggable>
