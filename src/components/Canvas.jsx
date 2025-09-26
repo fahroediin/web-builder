@@ -16,7 +16,6 @@ const ComponentTree = ({ components, onSelectComponent, selectedComponentId, isP
         <SortableItem
           key={comp.id}
           component={comp}
-          // DIUBAH: Teruskan semua prop yang dibutuhkan ke SortableItem
           onSelectComponent={onSelectComponent}
           selectedComponentId={selectedComponentId}
           isPreviewMode={isPreviewMode}
@@ -26,7 +25,6 @@ const ComponentTree = ({ components, onSelectComponent, selectedComponentId, isP
   );
 };
 
-// DIUBAH: Terima prop selectedComponentId
 const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPreviewMode }) => {
   const {
     attributes,
@@ -50,7 +48,6 @@ const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPre
     visibility: isDragging ? 'hidden' : 'visible',
   };
 
-  // Hitung isSelected di sini
   const isSelected = !isPreviewMode && component.id === selectedComponentId;
 
   return (
@@ -66,7 +63,7 @@ const SortableItem = ({ component, onSelectComponent, selectedComponentId, isPre
     >
       <RenderedComponent
         component={component}
-        isSelected={isSelected} // Teruskan hasil perhitungan
+        isSelected={isSelected}
         isPreviewMode={isPreviewMode}
         onSelectComponent={onSelectComponent}
         selectedComponentId={selectedComponentId}
@@ -85,10 +82,15 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
     margin: component.styles?.margin,
     padding: component.styles?.padding,
     userSelect: 'none',
-    borderRadius: '4px',
     boxShadow: isDraggingOverlay ? '0 10px 20px rgba(0,0,0,0.2)' : 'none',
-    display: component.styles?.display,
+    
+    // Penerapan style baru
+    display: component.type === 'container' ? 'flex' : component.styles?.display,
     flexDirection: component.styles?.flexDirection,
+    justifyContent: component.styles?.justifyContent,
+    alignItems: component.styles?.alignItems,
+    gap: component.styles?.gap,
+    borderRadius: component.styles?.borderRadius,
   };
 
   if (!isPreviewMode) {

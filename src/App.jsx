@@ -121,19 +121,33 @@ function App() {
             id: uuidv4(),
             type: 'container',
             content: 'Layout Kolom',
-            styles: { flexDirection: 'row', padding: '10px', margin: '10px' },
+            styles: { 
+              flexDirection: 'row', padding: '10px', margin: '10px', 
+              justifyContent: 'flex-start', alignItems: 'stretch', gap: '20px', borderRadius: '4px' 
+            },
             children: Array.from({ length: columnCount }, () => ({
               id: uuidv4(),
               type: 'container',
               content: 'Kolom',
-              styles: { padding: '10px', margin: '0px', flexDirection: 'column' },
+              styles: { 
+                padding: '10px', margin: '0px', flexDirection: 'column',
+                justifyContent: 'flex-start', alignItems: 'flex-start', gap: '10px', borderRadius: '4px'
+              },
               children: [],
             })),
           };
         } else {
+          const baseStyles = {
+            color: null, backgroundColor: null, fontSize: '16px', margin: '10px', padding: '10px', borderRadius: '4px'
+          };
+          if (active.id === 'container') {
+            Object.assign(baseStyles, {
+              flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '10px'
+            });
+          }
           newComponent = {
             id: uuidv4(), type: active.id, content: `Ini adalah ${active.id}`,
-            styles: { color: null, backgroundColor: null, fontSize: '16px', margin: '10px', padding: '10px', flexDirection: 'column' },
+            styles: baseStyles,
             children: [],
           };
         }
