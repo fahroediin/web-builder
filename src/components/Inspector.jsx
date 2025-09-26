@@ -1,7 +1,6 @@
 // src/components/Inspector.jsx
 import React from 'react';
 
-// DIUBAH: Terima prop 'onDelete'
 function Inspector({ component, onContentChange, onStyleChange, onDelete }) {
   if (!component) {
     return (
@@ -27,14 +26,23 @@ function Inspector({ component, onContentChange, onStyleChange, onDelete }) {
         <label htmlFor="content">Konten Teks</label>
         <input id="content" type="text" value={component.content} onChange={(e) => onContentChange(component.id, e.target.value)} />
       </div>
-      <div className="style-control">
+
+      {/* DIUBAH: Tambahkan tombol Reset */}
+      <div className="style-control with-reset">
         <label htmlFor="color">Warna Teks</label>
-        <input id="color" type="color" value={component.styles.color} onChange={(e) => handleStyleChange('color', e.target.value)} />
+        <div className="input-wrapper">
+          <input id="color" type="color" value={component.styles.color ?? '#000000'} onChange={(e) => handleStyleChange('color', e.target.value)} />
+          <button className="reset-button" onClick={() => handleStyleChange('color', null)}>Reset</button>
+        </div>
       </div>
-      <div className="style-control">
+      <div className="style-control with-reset">
         <label htmlFor="backgroundColor">Warna Latar</label>
-        <input id="backgroundColor" type="color" value={component.styles.backgroundColor} onChange={(e) => handleStyleChange('backgroundColor', e.target.value)} />
+        <div className="input-wrapper">
+          <input id="backgroundColor" type="color" value={component.styles.backgroundColor ?? '#ffffff'} onChange={(e) => handleStyleChange('backgroundColor', e.target.value)} />
+          <button className="reset-button" onClick={() => handleStyleChange('backgroundColor', null)}>Reset</button>
+        </div>
       </div>
+      
       <div className="style-control">
         <label htmlFor="fontSize">Ukuran Font (px)</label>
         <input id="fontSize" type="number" value={parseInt(component.styles.fontSize)} onChange={(e) => handleNumericStyleChange('fontSize', e.target.value)} />
@@ -48,13 +56,11 @@ function Inspector({ component, onContentChange, onStyleChange, onDelete }) {
         <input id="padding" type="number" value={parseInt(component.styles.padding)} onChange={(e) => handleNumericStyleChange('padding', e.target.value)} />
       </div>
 
-      {/* --- BAGIAN BARU UNTUK TOMBOL HAPUS --- */}
       <div className="delete-section">
         <button className="delete-button" onClick={() => onDelete(component.id)}>
           Hapus Komponen
         </button>
       </div>
-      {/* --- AKHIR BAGIAN BARU --- */}
     </div>
   );
 }

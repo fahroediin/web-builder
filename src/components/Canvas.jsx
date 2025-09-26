@@ -15,15 +15,16 @@ const SortableItem = ({ component, isSelected, onSelectComponent }) => {
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({ 
     id: component.id,
-    // DIHAPUS: Konfigurasi 'activationConstraint' yang lama sudah dihapus dari sini.
-    // Pengaturan sekarang dilakukan secara global di App.jsx
   });
 
+  // DIUBAH: Gunakan 'visibility: hidden' untuk menghilangkan kedipan
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    visibility: isDragging ? 'hidden' : 'visible',
   };
 
   return (
@@ -42,25 +43,32 @@ const SortableItem = ({ component, isSelected, onSelectComponent }) => {
   );
 };
 
-const RenderedComponent = ({ component, isSelected }) => {
+// DIUBAH: Tambahkan prop 'isDraggingOverlay'
+export const RenderedComponent = ({ component, isSelected, isDraggingOverlay }) => {
   const style = {
-    border: isSelected ? '2px solid #007bff' : '1px solid #ccc',
-    cursor: 'grab',
-    color: component.styles.color,
-    backgroundColor: component.styles.backgroundColor,
-    fontSize: component.styles.fontSize,
-    margin: component.styles.margin,
-    padding: component.styles.padding,
-    userSelect: 'none', 
+    color: component.styles?.color || 'var(--text-primary)',
+    backgroundColor: component.styles?.backgroundColor || 'var(--bg-tertiary)',
+    border: isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)',
+    cursor: isDraggingOverlay ? 'grabbing' : 'grab',
+    fontSize: component.styles?.fontSize,
+    margin: component.styles?.margin,
+    padding: component.styles?.padding,
+    userSelect: 'none',
+    borderRadius: '4px',
+    // Tambahkan bayangan jika ini adalah overlay yang di-drag
+    boxShadow: isDraggingOverlay ? '0 10px 20px rgba(0,0,0,0.2)' : 'none',
   };
+
+  const className = `canvas-component canvas-component-${component.type}`;
 
   switch (component.type) {
     case 'heading':
-      return <h1 style={style}>{component.content}</h1>;
+      return <h1 style={style} className={className}>{component.content}</h1>;
     case 'button':
-      return <button style={style}>{component.content}</button>;
+      style.border = isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)';
+      return <button style={style} className={className}>{component.content}</button>;
     case 'paragraph':
-      return <p style={style}>{component.content}</p>;
+      return <p style={style} className={className}>{component.content}</p>;
     default:
       return null;
   }

@@ -2,14 +2,15 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 
-// Komponen kecil yang bisa di-drag
-function Draggable({ id, children }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+export function Draggable({ id, children }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: id,
   });
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
+
+  // DIUBAH: Gunakan 'visibility: hidden'
+  const style = {
+    visibility: isDragging ? 'hidden' : 'visible',
+  };
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes} className="draggable-item">
@@ -18,7 +19,6 @@ function Draggable({ id, children }) {
   );
 }
 
-// Komponen Sidebar utama
 function Sidebar() {
   return (
     <div className="sidebar">

@@ -139,6 +139,32 @@ body {
   cursor: pointer;
 }
 
+/* Tambahkan ini di suatu tempat di tengah file */
+.canvas-component {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: 4px;
+}
+
+/* Tambahkan ini di bagian styling Inspector */
+.input-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.input-wrapper input[type="color"] {
+  flex-grow: 1;
+}
+
+.reset-button {
+  padding: 0 15px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .delete-section {
   margin-top: 20px;
   border-top: 1px solid var(--border-color-light); /* Gunakan variabel */
@@ -158,4 +184,15 @@ body {
 
 .delete-button:hover {
   background-color: var(--danger-hover-color); /* Gunakan variabel */
+}
+
+.draggable-item-overlay {
+  padding: 10px;
+  border: 1px solid var(--border-color-light);
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  cursor: grabbing;
 }
