@@ -27,33 +27,37 @@ function Inspector({ component, onContentChange, onStyleChange, onDelete }) {
         <input id="content" type="text" value={component.content} onChange={(e) => onContentChange(component.id, e.target.value)} />
       </div>
 
-      {/* DIUBAH: Tambahkan tombol Reset */}
       <div className="style-control with-reset">
         <label htmlFor="color">Warna Teks</label>
         <div className="input-wrapper">
-          <input id="color" type="color" value={component.styles.color ?? '#000000'} onChange={(e) => handleStyleChange('color', e.target.value)} />
+          {/* DIUBAH: Gunakan optional chaining (?.) */}
+          <input id="color" type="color" value={component.styles?.color ?? '#000000'} onChange={(e) => handleStyleChange('color', e.target.value)} />
           <button className="reset-button" onClick={() => handleStyleChange('color', null)}>Reset</button>
         </div>
       </div>
       <div className="style-control with-reset">
         <label htmlFor="backgroundColor">Warna Latar</label>
         <div className="input-wrapper">
-          <input id="backgroundColor" type="color" value={component.styles.backgroundColor ?? '#ffffff'} onChange={(e) => handleStyleChange('backgroundColor', e.target.value)} />
+          {/* DIUBAH: Gunakan optional chaining (?.) */}
+          <input id="backgroundColor" type="color" value={component.styles?.backgroundColor ?? '#ffffff'} onChange={(e) => handleStyleChange('backgroundColor', e.target.value)} />
           <button className="reset-button" onClick={() => handleStyleChange('backgroundColor', null)}>Reset</button>
         </div>
       </div>
       
       <div className="style-control">
         <label htmlFor="fontSize">Ukuran Font (px)</label>
-        <input id="fontSize" type="number" value={parseInt(component.styles.fontSize)} onChange={(e) => handleNumericStyleChange('fontSize', e.target.value)} />
+        {/* DIUBAH: Gunakan optional chaining (?.) */}
+        <input id="fontSize" type="number" value={parseInt(component.styles?.fontSize ?? '16')} onChange={(e) => handleNumericStyleChange('fontSize', e.target.value)} />
       </div>
       <div className="style-control">
         <label htmlFor="margin">Margin (px)</label>
-        <input id="margin" type="number" value={parseInt(component.styles.margin)} onChange={(e) => handleNumericStyleChange('margin', e.target.value)} />
+        {/* DIUBAH: Gunakan optional chaining (?.) */}
+        <input id="margin" type="number" value={parseInt(component.styles?.margin ?? '10')} onChange={(e) => handleNumericStyleChange('margin', e.target.value)} />
       </div>
       <div className="style-control">
         <label htmlFor="padding">Padding (px)</label>
-        <input id="padding" type="number" value={parseInt(component.styles.padding)} onChange={(e) => handleNumericStyleChange('padding', e.target.value)} />
+        {/* DIUBAH: Gunakan optional chaining (?.) */}
+        <input id="padding" type="number" value={parseInt(component.styles?.padding ?? '10')} onChange={(e) => handleNumericStyleChange('padding', e.target.value)} />
       </div>
 
       <div className="delete-section">

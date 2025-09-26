@@ -18,7 +18,7 @@ const SortableItem = ({ component, isSelected, onSelectComponent, isPreviewMode 
     isDragging,
   } = useSortable({ 
     id: component.id,
-    disabled: isPreviewMode,
+    disabled: isPreviewMode, // INI BENAR DAN DIPERTAHANKAN
   });
 
   const style = {
@@ -48,7 +48,7 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
   const style = {
     color: component.styles?.color || 'var(--text-primary)',
     backgroundColor: component.styles?.backgroundColor || 'var(--bg-tertiary)',
-    border: '1px solid transparent', // Default border transparan
+    border: '1px solid transparent',
     cursor: isPreviewMode ? 'default' : (isDraggingOverlay ? 'grabbing' : 'grab'),
     fontSize: component.styles?.fontSize,
     margin: component.styles?.margin,
@@ -68,7 +68,6 @@ export const RenderedComponent = ({ component, isSelected, isDraggingOverlay, is
     case 'heading':
       return <h1 style={style} className={className}>{component.content}</h1>;
     case 'button':
-      // Untuk button, kita perlu memastikan border default-nya di-override
       if (!isPreviewMode) {
         style.border = isSelected ? '2px solid var(--accent-color)' : '1px solid var(--border-color)';
       }

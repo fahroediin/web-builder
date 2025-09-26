@@ -1,11 +1,13 @@
 // src/components/Sidebar.jsx
 import React from 'react';
-// DIUBAH: Import useDroppable
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 
-export function Draggable({ id, children }) {
+// DIUBAH: Terima prop isPreviewMode
+export function Draggable({ id, children, isPreviewMode }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: id,
+    // BARU: Nonaktifkan drag saat pratinjau
+    disabled: isPreviewMode,
   });
 
   const style = {
@@ -19,19 +21,18 @@ export function Draggable({ id, children }) {
   );
 }
 
-function Sidebar() {
-  // BARU: Jadikan sidebar sebagai droppable container
+// DIUBAH: Terima dan teruskan prop isPreviewMode
+function Sidebar({ isPreviewMode }) {
   const { setNodeRef } = useDroppable({
-    id: 'sidebar-container', // Beri ID unik
+    id: 'sidebar-container',
   });
 
   return (
-    // DIUBAH: Terapkan ref ke div utama sidebar
     <div ref={setNodeRef} className="sidebar">
       <h3>Komponen</h3>
-      <Draggable id="heading">Judul (Heading)</Draggable>
-      <Draggable id="button">Tombol (Button)</Draggable>
-      <Draggable id="paragraph">Paragraf</Draggable>
+      <Draggable id="heading" isPreviewMode={isPreviewMode}>Judul (Heading)</Draggable>
+      <Draggable id="button" isPreviewMode={isPreviewMode}>Tombol (Button)</Draggable>
+      <Draggable id="paragraph" isPreviewMode={isPreviewMode}>Paragraf</Draggable>
     </div>
   );
 }

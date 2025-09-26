@@ -49,21 +49,26 @@ function App() {
   }, [canvasComponents]);
 
   function handleDragStart(event) {
+    if (isPreviewMode) return;
     const { active } = event;
     const component = canvasComponents.find(c => c.id === active.id);
     setActiveComponent(component || { type: active.id, id: active.id });
   }
 
   function handleDragEnd(event) {
-    const { active, over } = event;
     setActiveComponent(null);
+    if (isPreviewMode) return;
+
+    const { active, over } = event;
     if (!over || over.id === 'sidebar-container') return;
 
     const isSidebarComponent = ['heading', 'button', 'paragraph'].includes(active.id);
     const isCanvasComponent = canvasComponents.some(c => c.id === active.id);
 
+    // --- LOGIKA DIPERBAIKI MENGGUNAKAN PEMERIKSAAN ID LANGSUNG ---
+    // Skenario 1: Menambah komponen baru dari sidebar
     if (isSidebarComponent) {
-      const isDroppingInCanvasArea = over.data.current?.type === 'canvas-container' || over.data.current?.type === 'sortable-item';
+      const isDroppingInCanvasArea = over.id === 'canvas' || canvasComponents.some(c => c.id === over.id);
       if (isDroppingInCanvasArea) {
         const newComponent = {
           id: uuidv4(), type: active.id, content: `Ini adalah ${active.id}`,
@@ -72,9 +77,10 @@ function App() {
         setCanvasComponents((prev) => [...prev, newComponent]);
       }
     } 
+    // Skenario 2: Mengurutkan komponen yang sudah ada di canvas
     else if (isCanvasComponent) {
-      const isTargetSortableItem = over.data.current?.type === 'sortable-item';
-      if (isTargetSortableItem && active.id !== over.id) {
+      const isTargetInCanvas = canvasComponents.some(c => c.id === over.id);
+      if (isTargetInCanvas && active.id !== over.id) {
         const oldIndex = canvasComponents.findIndex(c => c.id === active.id);
         const newIndex = canvasComponents.findIndex(c => c.id === over.id);
         setCanvasComponents(components => arrayMove(components, oldIndex, newIndex));
@@ -100,10 +106,9 @@ function App() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd} 
         collisionDetection={closestCenter}
-        disabled={isPreviewMode}
       >
         <div className={`app-container ${isPreviewMode ? 'preview-mode' : ''}`}>
-          {!isPreviewMode && <Sidebar />}
+          <Sidebar isPreviewMode={isPreviewMode} />
           
           <Canvas 
             components={canvasComponents} 
