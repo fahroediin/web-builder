@@ -1,7 +1,6 @@
 // src/App.jsx
 
 import React, { useState, useEffect } from 'react';
-// DIUBAH: Import sensor dari dnd-kit
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Sidebar from './components/Sidebar';
 import Canvas from './components/Canvas';
 import Inspector from './components/Inspector';
+import Toolbar from './components/Toolbar'; // <-- BARU: Import Toolbar
 import './App.css';
 
 function App() {
@@ -19,9 +19,23 @@ function App() {
   
   const [selectedComponentId, setSelectedComponentId] = useState(null);
 
-  // BARU: Konfigurasi sensor
-  // Ini akan mengaktifkan drag hanya jika mouse digeser lebih dari 10 piksel.
-  // Klik biasa tidak akan memicu drag.
+  // --- LOGIKA BARU UNTUK TEMA ---
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    // Terapkan tema ke elemen html
+    document.documentElement.setAttribute('data-theme', theme);
+    // Simpan preferensi tema
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+  // --- AKHIR LOGIKA BARU ---
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -82,27 +96,30 @@ function App() {
   };
 
   return (
-    // DIUBAH: Tambahkan prop 'sensors' yang sudah kita definisikan
-    <DndContext 
-      sensors={sensors} 
-      onDragEnd={handleDragEnd} 
-      collisionDetection={closestCenter}
-    >
-      <div className="app-container">
-        <Sidebar />
-        <Canvas 
-          components={canvasComponents} 
-          onSelectComponent={setSelectedComponentId}
-          selectedComponentId={selectedComponentId}
-        />
-        <Inspector 
-          component={selectedComponent}
-          onContentChange={updateComponentContent}
-          onStyleChange={updateComponentStyle}
-          onDelete={deleteComponent}
-        />
-      </div>
-    </DndContext>
+    // DIUBAH: Struktur JSX diubah untuk mengakomodasi Toolbar
+    <div className="app-wrapper">
+      <Toolbar theme={theme} toggleTheme={toggleTheme} />
+      <DndContext 
+        sensors={sensors} 
+        onDragEnd={handleDragEnd} 
+        collisionDetection={closestCenter}
+      >
+        <div className="app-container">
+          <Sidebar />
+          <Canvas 
+            components={canvasComponents} 
+            onSelectComponent={setSelectedComponentId}
+            selectedComponentId={selectedComponentId}
+          />
+          <Inspector 
+            component={selectedComponent}
+            onContentChange={updateComponentContent}
+            onStyleChange={updateComponentStyle}
+            onDelete={deleteComponent}
+          />
+        </div>
+      </DndContext>
+    </div>
   );
 }
 
