@@ -43,13 +43,15 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* BARU: Pastikan wrapper tidak bisa di-scroll */
+  overflow: hidden;
 }
 
 .toolbar {
   padding: 10px 20px;
   background-color: var(--bg-tertiary);
   border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
+  flex-shrink: 0; /* Pastikan toolbar tidak menyusut */
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -77,8 +79,9 @@ body {
 
 .app-container {
   display: flex;
-  height: 100%;
-  flex-grow: 1;
+  /* DIUBAH: Hapus height: 100% */
+  flex-grow: 1; /* Ini adalah kunci: buat container ini mengisi sisa ruang */
+  min-height: 0; /* Perbaikan untuk bug flexbox di beberapa browser */
 }
 
 .app-container.preview-mode .canvas {
@@ -93,7 +96,7 @@ body {
   width: 250px;
   padding: 20px;
   background-color: var(--bg-primary);
-  overflow-y: auto;
+  overflow-y: auto; /* Pastikan panel bisa di-scroll secara individual */
   flex-shrink: 0;
 }
 .sidebar { border-right: 1px solid var(--border-color); }
@@ -146,9 +149,12 @@ body {
   min-height: 50px;
   border-style: dashed !important;
   display: flex;
-  gap: 10px;
-  position: relative; /* <-- PERBAIKAN KUNCI ADA DI SINI */
   transition: background-color 0.2s ease;
+}
+
+.canvas-component-container.is-empty {
+  justify-content: center;
+  align-items: center;
 }
 
 .canvas-component-container:hover {
@@ -165,10 +171,6 @@ body {
 }
 
 .empty-container-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   margin: 0;
   color: var(--text-secondary);
   font-style: italic;
@@ -188,6 +190,10 @@ body {
   border-radius: 2px;
   margin: 2px 0;
   box-shadow: 0 0 5px var(--accent-color);
+}
+
+.drop-indicator.is-container {
+  margin: 10px;
 }
 
 .inspector label {
